@@ -35,7 +35,6 @@ export default function RootLayout({
   return (
     
     <ClerkProvider>
-      <SpeedInsights />
         <html lang="en">
           <body
             className={`${inter.variable} ${geistMono.variable} antialiased`}
@@ -44,6 +43,7 @@ export default function RootLayout({
               {children}
            
             <Toaster />
+            <SpeedInsights />
           </body>
         </html>
       
