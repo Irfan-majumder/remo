@@ -1,12 +1,11 @@
 "use client";
 
 import { z } from "zod";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
 import { formOptions } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
 
 import { useAppForm } from "@/hooks/use-app-form";
+
 
 const ttsFormSchema = z.object({
   text: z.string().min(1, "Please enter some text"),
@@ -32,10 +31,6 @@ export const ttsFormOptions = formOptions({
   defaultValues: defaultTTSValues,
 });
 
-export type TTSResponse = {
-  id: string;
-};
-
 export function TextToSpeechForm({
   children,
   defaultValues,
@@ -43,13 +38,7 @@ export function TextToSpeechForm({
   children: React.ReactNode;
   defaultValues?: TTSFormValues;
 }) {
-  const router = useRouter();
-  const createMutation = useMutation<TTSResponse, Error, TTSFormValues>({
-    mutationFn: async () => {
-      // server integration removed; placeholder to surface an error
-      throw new Error("SERVER_INTEGRATION_MISSING");
-    },
-  });
+  
 
   const form = useAppForm({
     ...ttsFormOptions,
@@ -58,28 +47,7 @@ export function TextToSpeechForm({
       onSubmit: ttsFormSchema,
     },
     onSubmit: async ({ value }) => {
-      try {
-        const data = await createMutation.mutateAsync({
-          text: value.text.trim(),
-          voiceId: value.voiceId,
-          temperature: value.temperature,
-          topP: value.topP,
-          topK: value.topK,
-          repetitionPenalty: value.repetitionPenalty,
-        });
-
-        toast.success("Audio generated successfully!");
-        router.push(`/text-to-speech/${data.id}`);
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Failed to generate audio";
-
-        if (message === "SUBSCRIPTION_REQUIRED") {
-          toast.error("Subscription required");
-        } else {
-          toast.error(message);
-        }
-      }
+      console.log(value);
     },
   });
 
