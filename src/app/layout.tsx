@@ -1,5 +1,6 @@
 
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
@@ -38,6 +39,7 @@ export default function RootLayout({
     <ClerkProvider>
       <TRPCReactProvider>
       <SpeedInsights />
+      <Analytics />
         <html lang="en">
           <body
             className={`${inter.variable} ${geistMono.variable} antialiased`}
