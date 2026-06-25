@@ -1,9 +1,11 @@
 "use client";
 
 import { z } from "zod";
-
+import { toast } from "sonner";
 import { formOptions } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 
+import { useTRPC } from "@/trpc/client";
 import { useAppForm } from "@/hooks/use-app-form";
 
 
@@ -38,7 +40,10 @@ export function TextToSpeechForm({
   children: React.ReactNode;
   defaultValues?: TTSFormValues;
 }) {
-  
+  const trpc = useTRPC();
+  const createMutation = useMutation(
+    trpc.generations.create.mutationOptions({}),
+  );
 
   const form = useAppForm({
     ...ttsFormOptions,
@@ -47,7 +52,30 @@ export function TextToSpeechForm({
       onSubmit: ttsFormSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      try {
+        await createMutation.mutateAsync({
+          text: value.text.trim(),
+          voiceId: value.voiceId,
+          temperature: value.temperature,
+          topP: value.topP,
+          topK: value.topK,
+          repetitionPenalty: value.repetitionPenalty,
+        });
+
+        toast.success("Audio generated successfully!");
+        
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Failed to generate audio";
+
+        if (message === "SUBSCRIPTION_REQUIRED") {
+          toast.error("Subscription required", {
+            
+          });
+        } else {
+          toast.error(message);
+        }
+      }
     },
   });
 
